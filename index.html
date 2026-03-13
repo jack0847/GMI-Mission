@@ -98,6 +98,7 @@
     #lightbox img { max-width:90vw; max-height:90vh; object-fit:contain; }
     #lightbox-close { position:absolute; top:20px; right:28px; font-size:36px; color:#fff; cursor:pointer; background:none; border:none; }
 
+    .mission-count { font-size:13px; color:#666; margin-bottom:20px; }
     .empty-state { text-align:center; padding:80px 20px; color:#888; }
     .empty-state-icon { font-size:48px; margin-bottom:16px; }
 
@@ -134,21 +135,10 @@
 
   <section class="filter-section">
     <div class="filter-title">Browse trips by Filter:</div>
-    <div class="filter-dropdowns">
-      <select class="filter-select" id="filter-region" onchange="applyFilters()">
-        <option value="">SELECT A REGION ↓</option>
-      </select>
-      <select class="filter-select" id="filter-period" onchange="applyFilters()">
-        <option value="">SELECT A PERIOD ↓</option>
-        <option value="2주">2주</option>
-        <option value="3주">3주</option>
-        <option value="4주">4주</option>
-        <option value="2~3주">2~3주</option>
-      </select>
-    </div>
   </section>
 
   <div class="content-wrap">
+    <div class="mission-count" id="mission-count"></div>
     <div class="card-grid" id="cards"></div>
     <div class="empty-state" id="empty-state" style="display:none;">
       <div class="empty-state-icon">🌍</div>
@@ -313,8 +303,9 @@ function openLightbox(src) { document.getElementById('lightbox-img').src=src; do
 function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); document.getElementById('lightbox-img').src=''; }
 document.getElementById('lightbox').addEventListener('click', function(e){ if(e.target===this) closeLightbox(); });
 
-populateFilters();
-renderCards(missions.filter(m => m.country === '말라위'));
+const displayed = missions.filter(m => m.country === '말라위');
+document.getElementById('mission-count').textContent = `🌍 사역지 ${displayed.length}개 · 추가 예정`;
+renderCards(displayed);
 </script>
 </body>
 </html>
