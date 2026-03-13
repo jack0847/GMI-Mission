@@ -314,7 +314,7 @@ function closeLightbox() { document.getElementById('lightbox').classList.remove(
 document.getElementById('lightbox').addEventListener('click', function(e){ if(e.target===this) closeLightbox(); });
 
 populateFilters();
-renderCards(missions);
+renderCards(missions.filter(m => m.country === '말라위'));
 </script>
 </body>
 </html>
