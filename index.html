@@ -68,7 +68,8 @@
     .detail-body { max-width:1100px; margin:0 auto; padding:40px 24px 60px; display:grid; grid-template-columns:1fr 340px; gap:40px; align-items:start; }
     .detail-section-title { font-size:11px; font-weight:700; color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; padding-bottom:8px; border-bottom:2px solid var(--blue); display:inline-block; }
     .detail-desc { font-size:15px; color:#333; line-height:1.8; white-space:pre-line; margin-bottom:36px; }
-    .gallery-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:10px; max-width:620px; }
+    .gallery-full-wrap { max-width:1100px; margin:0 auto; padding:0 24px 48px; }
+    .gallery-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
     .gallery-thumb { width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; cursor:pointer; transition:opacity .2s; border-radius:4px; }
     .gallery-thumb:hover { opacity:.85; }
     .detail-right { position:sticky; top:20px; }
@@ -116,6 +117,7 @@
       .detail-right { position:static; }
       .detail-hero { height:280px; }
       .detail-hero-title { font-size:26px; }
+      .gallery-grid { grid-template-columns:repeat(2,1fr); }
       .hero h1 { font-size:26px; } .cta-section h2 { font-size:22px; }
       .hero-stats { gap:24px; }
     }
@@ -174,10 +176,6 @@
     <div class="detail-left">
       <div class="detail-section-title" id="d-about-title">About</div>
       <div class="detail-desc" id="d-desc"></div>
-      <div id="gallery-wrap" style="display:none;">
-        <div class="detail-section-title">Photos</div>
-        <div class="gallery-grid" id="d-gallery"></div>
-      </div>
       <div id="ministry-wrap">
         <div class="detail-section-title">About Ministry</div>
         <div class="detail-desc" id="d-ministry"></div>
@@ -211,6 +209,13 @@
           <a class="apply-btn" id="d-apply-btn" href="#" target="_blank">신청하기</a>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div id="gallery-wrap" style="display:none;">
+    <div class="gallery-full-wrap">
+      <div class="detail-section-title">Photos</div>
+      <div class="gallery-grid" id="d-gallery"></div>
     </div>
   </div>
 </div>
