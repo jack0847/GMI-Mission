@@ -24,7 +24,7 @@
     /* HERO */
     .hero { background:#fff; text-align:center; padding:56px 20px 36px; }
     .hero h1 { font-size:42px; font-weight:900; color:var(--navy); line-height:1.15; margin-bottom:16px; letter-spacing:-0.5px; text-transform:uppercase; }
-    .hero p { font-size:15px; color:#555; max-width:620px; margin:0 auto; line-height:1.75; }
+    .hero p { font-size:18px; font-weight:700; color:#7a5c2e; max-width:700px; margin:0 auto; line-height:1.85; }
 
     /* FILTER */
     .filter-section { background:#e8e8e8; padding:20px 40px; border-bottom:2px solid #ccc; }
@@ -121,7 +121,7 @@
 <nav id="main-nav">
   <div class="nav-spacer"></div>
   <a class="nav-logo" href="index.html">
-    <img src="GMI 로고.png" alt="GMI 로고" style="height:70px; width:auto; object-fit:contain;">
+    <img src="GMI 로고.png" alt="GMI 로고" style="height:90px; width:auto; object-fit:contain;">
   </a>
   <a class="nav-cta" href="#cards">사역지 보기</a>
 </nav>
@@ -129,7 +129,7 @@
 <div id="main-page">
   <section class="hero">
     <h1>단기선교 사역지</h1>
-    <p>GMI는 세계 각지의 현지 교회 및 기관과의 오랜 파트너십을 통해 하나님 나라의 사역을 이어갑니다. 이번 여름, 당신의 자리가 있습니다.</p>
+    <p>GMI는 30여개국 100여명의 동문 선교사 및 글로벌 파트너와 함께 단기선교를 통해 하나님 나라를 세워갑니다.<br>이번 여름 하나님의 부르심에 응답할 여러분을 찾습니다.</p>
   </section>
 
   <section class="filter-section">
@@ -238,7 +238,6 @@ function renderCards(list) {
       <div class="card-body">
         <div class="card-country">${m.country}</div>
         <div class="card-desc">${m.desc}</div>
-        <button class="card-btn">${m.country} 사역지 보기</button>
       </div>`;
     grid.appendChild(card);
   });
