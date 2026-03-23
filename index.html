@@ -358,7 +358,7 @@ function openLightbox(src) { document.getElementById('lightbox-img').src=src; do
 function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); document.getElementById('lightbox-img').src=''; }
 document.getElementById('lightbox').addEventListener('click', function(e){ if(e.target===this) closeLightbox(); });
 
-const displayed = missions.filter(m => ['말라위','이스라엘/팔레스타인','마다가스카르','스리랑카'].includes(m.country));
+const displayed = missions;
 document.getElementById('mission-count').textContent = `🌍 사역지 ${displayed.length}개 · 추가 예정`;
 renderCards(displayed);
 </script>
