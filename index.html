@@ -114,18 +114,41 @@
     .cta-contact { font-size:14px; color:var(--gold); font-weight:700; letter-spacing:.5px; }
 
     @media(max-width:768px){
-      nav { padding:0 20px; }
-      .filter-section { padding:16px 20px; }
-      .filter-dropdowns { flex-direction:column; }
-      .filter-select { max-width:100%; }
-      .content-wrap { padding:24px 16px 40px; }
-      .detail-body { grid-template-columns:1fr; }
-      .detail-right { position:static; }
-      .detail-hero { height:280px; }
-      .detail-hero-title { font-size:26px; }
-      .gallery-grid { grid-template-columns:repeat(2,1fr); }
-      .hero h1 { font-size:26px; } .cta-section h2 { font-size:22px; }
-      .hero-stats { gap:24px; }
+      /* NAV */
+      nav { padding:0 16px; height:70px; }
+
+      /* HERO */
+      .hero { padding:40px 16px 36px; }
+      .hero h1 { font-size:24px; letter-spacing:0; }
+      .hero p { font-size:14px; line-height:1.8; }
+      .hero-stats { gap:16px; flex-wrap:wrap; justify-content:center; }
+
+      /* FILTER */
+      .filter-section { padding:14px 16px 16px; }
+      .filter-tabs { gap:8px; }
+      .filter-tab { font-size:12px; padding:7px 14px; }
+
+      /* CARDS */
+      .content-wrap { padding:20px 14px 40px; }
+      .card-grid { grid-template-columns:1fr; gap:16px; }
+      .card-grid .card { max-width:100%; }
+      .card-photo { height:200px; }
+
+      /* DETAIL */
+      .detail-back-bar { padding:12px 16px; }
+      .detail-hero { height:240px; }
+      .detail-hero-overlay { padding:20px 16px 18px; }
+      .detail-hero-title { font-size:22px; }
+      .detail-body { grid-template-columns:1fr; padding:24px 16px 40px; gap:24px; }
+      .detail-right { position:static; display:block; }
+      .detail-right .info-card { flex:none; }
+      .gallery-full-wrap { padding:0 14px 32px; }
+      .gallery-grid { grid-template-columns:repeat(2,1fr); gap:6px; }
+
+      /* CTA */
+      .cta-section { padding:48px 16px; }
+      .cta-section h2 { font-size:20px; }
+      .cta-section p { font-size:14px; }
     }
   </style>
 </head>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>QR 슬라이드 - 나라별</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #222;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 40px; padding: 40px;
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  }
+  .label { color: #aaa; font-size: 18px; }
+
+  .slide {
+    width: 1280px; height: 720px;
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #0f1f3d 0%, #1a3a6b 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 40px;
+  }
+
+  /* 상단 장식 라인 */
+  .slide::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(to right, transparent, #c8a96e, transparent);
+  }
+
+  .country-label {
+    color: #c8a96e; font-size: 30px; font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .slide-title {
+    color: #fff; font-size: 44px; font-weight: 800;
+    text-align: center;
+  }
+
+  .qr-row {
+    display: flex; gap: 120px; align-items: flex-start;
+  }
+
+  .qr-box {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 18px;
+  }
+
+  .qr-wrap {
+    width: 220px; height: 220px;
+    background: #fff; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .qr-wrap canvas, .qr-wrap img {
+    border-radius: 8px;
+  }
+
+  .qr-divider {
+    width: 2px; height: 220px;
+    background: linear-gradient(to bottom, transparent, rgba(200,169,110,0.4), transparent);
+    align-self: center;
+  }
+
+  .qr-label {
+    color: #fff; font-size: 22px; font-weight: 700;
+    text-align: center;
+  }
+
+  .qr-sub {
+    color: #7a9fc0; font-size: 15px; text-align: center;
+    margin-top: -10px;
+  }
+
+</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<script>
+const WEBSITE = "https://gmi-mission.vercel.app";
+
+const countries = [
+  { emoji:"🇲🇼", name:"말라위",               apply:"https://drive.google.com/open?id=1civHZvb1Bs0LGfKjhLw_eiVBSu222K0PyYwyv9jihFo&usp=drive_copy" },
+  { emoji:"🇰🇷", name:"제주 (한국)",           apply:"https://drive.google.com/open?id=1w0g-3VpKgKs8kd1_KyOaO03GWqEVHGW9L33qTzT3qsA&usp=drive_copy" },
+  { emoji:"🇮🇱", name:"이스라엘/팔레스타인",   apply:"https://drive.google.com/open?id=1RtHuBPSsYC2gbk_o3J2EJakQolbNYwu_yfVVyRIA2gc&usp=drive_copy" },
+  { emoji:"🇷🇺", name:"러시아",               apply:"https://drive.google.com/open?id=1zJbbXBf2pTsfHZHpseUiVZANMLxvoTVMrZ-ZRT2g160&usp=drive_copy" },
+  { emoji:"🇲🇬", name:"마다가스카르",           apply:"https://drive.google.com/open?id=1vmagbwf__69V7BrzM7nfpBMh50X4lpouCbkuSFYySys&usp=drive_copy" },
+  { emoji:"🇱🇰", name:"스리랑카",             apply:"https://drive.google.com/open?id=1S5LArjZetMqpWBa-SLTBcl8oevxitcKgI5yzyjqX_2c&usp=drive_copy" },
+  { emoji:"🇰🇬", name:"키르기즈스탄",          apply:"https://drive.google.com/open?id=1QVz1_2N0rIfzZDRtqJ3YZ46JSxMbAtZvHcYAa9LECZM&usp=drive_copy" },
+  { emoji:"🇯🇴", name:"요르단",               apply:"https://drive.google.com/open?id=106IUcULYZEwlcImMdMpiW5PlXD2Ja8UOARyvEiX25Z8&usp=drive_copy" },
+  { emoji:"🇹🇷", name:"튀르키예",             apply:"https://drive.google.com/open?id=1CDwJVybhuSiEzK_IahPtuYqzf8hY83MT24f9w7V2TeE&usp=drive_copy" },
+  { emoji:"🇲🇦", name:"모로코",               apply:"https://drive.google.com/open?id=1teGTvB0_CKmHFAaGyflCVVzacN7vgGSszywEuBtAhp4&usp=drive_copy" },
+  { emoji:"🇯🇵", name:"일본",                 apply:"https://drive.google.com/open?id=1cN_bq4nvTmkZD-EyktJOcVn7T7sL_4rlwwkUPRqubtY&usp=drive_copy" },
+  { emoji:"🇰🇿", name:"카자흐스탄 (알마티)",   apply:"https://docs.google.com/forms/d/1u69g-XST3ch0ddXc71eyQ67UQanD1lKxdd0h-RKATYU/viewform" },
+];
+
+countries.forEach((c, i) => {
+  // 라벨
+  const label = document.createElement('div');
+  label.className = 'label';
+  label.textContent = `QR 슬라이드 — ${c.emoji} ${c.name}`;
+  document.body.appendChild(label);
+
+  // 슬라이드
+  const slide = document.createElement('div');
+  slide.className = 'slide';
+  slide.innerHTML = `
+    <div class="country-label">${c.emoji} ${c.name}</div>
+    <div class="slide-title">지금 바로 신청하세요</div>
+    <div class="qr-row">
+      <div class="qr-box">
+        <div class="qr-wrap" id="qa${i}"></div>
+        <div class="qr-label">✍️ 신청하기</div>
+        <div class="qr-sub">신청서 바로가기</div>
+      </div>
+      <div class="qr-divider"></div>
+      <div class="qr-box">
+        <div class="qr-wrap" id="qw${i}"></div>
+        <div class="qr-label">🌐 웹사이트</div>
+        <div class="qr-sub">전체 선교지 보기</div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(slide);
+
+  // QR 생성
+  new QRCode(document.getElementById(`qa${i}`), {
+    text: c.apply,
+    width: 200, height: 200,
+    colorDark: "#0f1f3d", colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+  new QRCode(document.getElementById(`qw${i}`), {
+    text: WEBSITE,
+    width: 200, height: 200,
+    colorDark: "#0f1f3d", colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+  });
+});
+</script>
+</body>
+</html>
