@@ -68,6 +68,11 @@
     .detail-body { max-width:1100px; margin:0 auto; padding:40px 24px 60px; display:grid; grid-template-columns:1fr 340px; gap:40px; align-items:start; }
     .detail-section-title { font-size:11px; font-weight:700; color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; padding-bottom:8px; border-bottom:2px solid var(--blue); display:inline-block; }
     .detail-desc { font-size:15px; color:#333; line-height:1.8; white-space:pre-line; margin-bottom:36px; }
+    .outreach-list { list-style:none; padding:0; margin:0 0 36px; display:flex; flex-direction:column; gap:10px; }
+    .outreach-item { display:flex; gap:14px; align-items:flex-start; }
+    .outreach-num { min-width:28px; height:28px; background:var(--blue); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; margin-top:2px; }
+    .outreach-text { font-size:15px; color:#333; line-height:1.7; }
+    .outreach-header { font-size:15px; color:#555; font-weight:600; line-height:1.7; }
     .gallery-full-wrap { max-width:1100px; margin:0 auto; padding:0 24px 48px; }
     .gallery-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
     .gallery-thumb { width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; cursor:pointer; transition:opacity .2s; border-radius:4px; }
@@ -187,7 +192,7 @@
       </div>
       <div id="outreach-wrap">
         <div class="detail-section-title">What to do in Outreach</div>
-        <div class="detail-desc" id="d-outreach"></div>
+        <ul class="outreach-list" id="d-outreach"></ul>
       </div>
     </div>
     <div class="detail-right">
@@ -248,6 +253,24 @@ const missions = [
   { id:11, emoji:"🇯🇵", heroPos:"center center", country:"일본", region:"아시아", org:"기독교 대한 성결교회", contact:"김주영", missionaryInfo:"21학번", email:"gabrile@naver.com", period:"7/14~21 (6박 7일)", airfare:"45만원", stay:"3만원/일", food:"1만 2천원/끼니", transport:"악기 수화물 비용 + 차량 렌트", desc:"일본은 경제적으로 선진국이지만 기독교 인구가 1% 미만인 대표적인 미전도 국가입니다. 불교·신토 문화가 중심이며 종교에 비교적 폐쇄적인 사회 분위기 속에서, 관계 중심의 접근과 문화적 이해를 기반으로 한 사역이 중요합니다. 삿포로에서 다음 세대를 향한 신앙 교육과 지역 사회 속 자연스러운 복음 전파가 이루어지고 있습니다.", ministry:"기독교 대한 성결교회 파송 선교사로 코로나 시기에 일본에 입국하여 교회 개척과 복음 전파를 중심으로 사역하고 있습니다. 소규모 모임을 통해 성경 공부와 제자 양육을 진행하며, 일본인들이 부담 없이 접근할 수 있는 방식으로 복음을 전합니다.\n\n• 크리스천 스쿨에서 미술 교사로 섬기며 교육 사역 병행\n• 청소년 찬양팀 사역을 통해 예배 공동체 확립\n• 지역 마나센터와 협력하여 어린이 급식·학습 지원 사역\n• 2025년 1월 가스펠 교회 개척, 본격적인 교회 사역 시작", outreach:"• 어린이·청소년 대상 문화·예술 프로그램 (악기 교육 및 체험)\n• 찬양팀 협력 사역 및 저녁 찬양 집회\n• 노방 찬양 및 노방 전도\n• 코도모쇼쿠도 (어린이 급식 봉사) 지원 및 참여", photo:["images/japan/jp_1.png","images/japan/jp_2.png","images/japan/jp_3.png","images/japan/jp_4.png","images/japan/jp_5.png"], applyUrl:"https://drive.google.com/open?id=1cN_bq4nvTmkZD-EyktJOcVn7T7sL_4rlwwkUPRqubtY&usp=drive_copy" },
   { id:12, emoji:"🇰🇿", heroPos:"center center", country:"카자흐스탄 (알마티)", region:"아시아", org:"His.net", contact:"김순종 / 이섬김", missionaryInfo:"", email:"", period:"7월 14일 ~ 7월 27일", airfare:"", stay:"", food:"", transport:"항공 제외 총 100만원 예상", desc:"세계 9위의 광활한 영토와 풍부한 자원을 가진 다민족 이슬람 국가입니다. 옛 수도 알마티는 '아시아의 알프스' 톈산 산맥을 품은 중앙아시아 경제 발전의 중심지입니다. 카작 민족의 복음화율은 1% 남짓이지만, 최근 도시를 중심으로 복음의 문이 열리고 있어 영적 관심과 기도가 매우 필요한 시점입니다.", ministry:"히즈넷(HisNet) 소속 김순종·이섬김 선교사 (카바르딘발카르 7년, 카자흐스탄 11년 사역). 마산동광교회(고신) 파송으로 현지인 대상 어학원(한국어·영어) 및 대안기술센터(컴퓨터 교육)를 운영하며 청소년·청년들을 깨우고, 이를 기반으로 교회 개척 사역을 이어가고 있습니다.", outreach:"• CAF 중앙아 3국 연합캠프: 우즈벡·카작·키르기즈 현지교회 청년·청소년 연합 예배 (제자도 주제, 5개국어 진행)\n• 복음 전도: 알마티 및 인근 지방 방문, 현지인과 친구가 되어 자연스럽게 복음 전파\n• 교회 및 공동체 지원: 현지 가정 방문, 어린이·청소년 사역 등 현지 교회 실질적 필요 지원\n• 문화 사역: 공원·거리 버스킹, 한국 문화 공연, 한국어·음악 교육 등 달란트 활용 사역", photo:["images/카자흐스탄/썸네일.jpeg","images/카자흐스탄/KakaoTalk_Photo_2026-03-27-17-39-23.jpeg","images/카자흐스탄/KakaoTalk_Photo_2026-03-27-17-39-36.jpeg","images/카자흐스탄/KakaoTalk_Photo_2026-03-27-17-39-51.jpeg","images/카자흐스탄/KakaoTalk_Photo_2026-03-27-17-40-07.jpeg"], applyUrl:"" }
 ];
+
+function renderOutreach(text) {
+  if (!text) return '';
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+  let num = 1, html = '';
+  lines.forEach(line => {
+    if (line.startsWith('•')) {
+      const content = line.slice(1).trim();
+      html += `<li class="outreach-item"><span class="outreach-num">${num++}</span><span class="outreach-text">${content}</span></li>`;
+    } else if (/^\d+\./.test(line)) {
+      const content = line.replace(/^\d+\.\s*/, '');
+      html += `<li class="outreach-item"><span class="outreach-num">${num++}</span><span class="outreach-text">${content}</span></li>`;
+    } else {
+      html += `<li class="outreach-header">${line}</li>`;
+    }
+  });
+  return html;
+}
 
 function populateFilters() {
   const regions = [...new Set(missions.map(m => m.region))];
@@ -310,7 +333,7 @@ function openDetail(m) {
   document.getElementById('d-about-title').textContent = 'About ' + m.country;
   document.getElementById('d-desc').textContent = m.desc;
   document.getElementById('d-ministry').textContent = m.ministry || '';
-  document.getElementById('d-outreach').textContent = m.outreach || '';
+  document.getElementById('d-outreach').innerHTML = renderOutreach(m.outreach);
   document.getElementById('d-org').textContent = m.org;
   document.getElementById('d-country2').textContent = m.country;
   document.getElementById('d-region2').textContent = m.region;
