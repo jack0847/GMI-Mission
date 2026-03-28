@@ -192,7 +192,7 @@
       </div>
       <div id="outreach-wrap">
         <div class="detail-section-title">What to do in Outreach</div>
-        <ul class="outreach-list" id="d-outreach"></ul>
+        <div class="detail-desc" id="d-outreach"></div>
       </div>
     </div>
     <div class="detail-right">
@@ -333,7 +333,7 @@ function openDetail(m) {
   document.getElementById('d-about-title').textContent = 'About ' + m.country;
   document.getElementById('d-desc').textContent = m.desc;
   document.getElementById('d-ministry').textContent = m.ministry || '';
-  document.getElementById('d-outreach').innerHTML = renderOutreach(m.outreach);
+  document.getElementById('d-outreach').textContent = m.outreach || '';
   document.getElementById('d-org').textContent = m.org;
   document.getElementById('d-country2').textContent = m.country;
   document.getElementById('d-region2').textContent = m.region;
