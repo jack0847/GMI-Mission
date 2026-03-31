@@ -93,22 +93,9 @@
     .cost-row { display:flex; flex-direction:column; margin-bottom:12px; font-size:14px; gap:2px; }
     .cost-row-label { font-size:11px; font-weight:700; color:#999; letter-spacing:.5px; text-transform:uppercase; }
     .cost-row-value { font-weight:700; color:var(--navy); word-break:keep-all; }
-    .total-cost-box { background:var(--blue); color:#fff; border-radius:10px; padding:20px 16px; text-align:center; }
-    .total-cost-label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; opacity:.75; margin-bottom:6px; }
-    .total-cost-amount { font-size:30px; font-weight:800; line-height:1.2; }
-    .total-cost-note { font-size:11px; opacity:.65; margin-top:6px; }
-    .airfree-box { background:#fffbee; border:1.5px solid #e6c84a; border-radius:10px; padding:18px 16px; text-align:center; }
-    .airfree-badge { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.5px; color:#8a6d00; background:#fde97a; border-radius:20px; padding:2px 10px; margin-bottom:8px; }
-    .airfree-label { font-size:11px; font-weight:700; letter-spacing:.5px; color:#8a6d00; text-transform:uppercase; margin-bottom:4px; }
-    .airfree-amount { font-size:26px; font-weight:800; color:#4a3800; }
-    .cost-parts-title { font-size:11px; font-weight:700; color:#888; letter-spacing:.5px; text-transform:uppercase; margin:14px 0 8px; }
-    .cost-parts { border:1px solid #e5e0d0; border-radius:8px; overflow:hidden; }
-    .cost-part-row { display:flex; align-items:center; padding:10px 12px; border-bottom:1px solid #e5e0d0; gap:6px; }
-    .cost-part-row:last-child { border-bottom:none; }
-    .cost-part-label { font-size:12px; font-weight:700; color:#333; flex:1; }
-    .cost-part-period { font-size:11px; color:#888; white-space:nowrap; }
-    .cost-part-amount { font-size:13px; font-weight:800; color:var(--navy); white-space:nowrap; margin-left:8px; }
-    .cost-change-note { font-size:11px; color:#aaa; margin-top:10px; text-align:center; }
+    .cost-section-label { font-size:10px; font-weight:700; color:#aaa; letter-spacing:.5px; text-transform:uppercase; margin:10px 0 4px; border-top:1px solid #e5e0d0; padding-top:10px; }
+    .cost-period { display:block; font-size:10px; font-weight:400; color:#aaa; margin-top:1px; }
+    .cost-change-note { font-size:11px; color:#bbb; margin-top:8px; }
     .apply-wrap { padding:20px 24px; }
     .apply-btn { display:block; width:100%; background:var(--navy); color:#fff; text-align:center; padding:16px; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; font-family:inherit; }
     .apply-btn:hover { background:var(--blue-dk); }
@@ -394,18 +381,17 @@ function openDetail(m) {
   if (m.costType === 'total') {
     costRows.style.display = 'none';
     costSpecial.style.display = 'block';
-    let partsHtml = '';
+    let html = `<div class="cost-row"><span class="cost-row-label">전체 참가비</span><span class="cost-row-value">${m.costTotal}</span></div>`;
     if (m.costParts && m.costParts.length) {
-      partsHtml = `<div class="cost-parts-title">부분 참가</div><div class="cost-parts">` +
-        m.costParts.map(p=>`<div class="cost-part-row"><span class="cost-part-label">${p.label}</span><span class="cost-part-period">${p.period}</span><span class="cost-part-amount">${p.cost}</span></div>`).join('') +
-        `</div>`;
+      html += `<div class="cost-section-label">부분 참가</div>`;
+      html += m.costParts.map(p=>`<div class="cost-row"><span class="cost-row-label">${p.label}<span class="cost-period">${p.period}</span></span><span class="cost-row-value">${p.cost}</span></div>`).join('');
     }
-    const noteHtml = m.costNote ? `<div class="cost-change-note">${m.costNote}</div>` : '';
-    costSpecial.innerHTML = `<div class="total-cost-box"><div class="total-cost-label">전체 참가비</div><div class="total-cost-amount">${m.costTotal}</div><div class="total-cost-note">항공·숙식·교통비 전체 포함</div></div>${partsHtml}${noteHtml}`;
+    if (m.costNote) html += `<div class="cost-change-note">${m.costNote}</div>`;
+    costSpecial.innerHTML = html;
   } else if (m.costType === 'airfree') {
     costRows.style.display = 'none';
     costSpecial.style.display = 'block';
-    costSpecial.innerHTML = `<div class="airfree-box"><div class="airfree-badge">항공비 별도</div><div class="airfree-label">숙박·식비·교통 합계</div><div class="airfree-amount">${m.costTotal}</div></div>`;
+    costSpecial.innerHTML = `<div class="cost-row"><span class="cost-row-label">항공비</span><span class="cost-row-value">별도</span></div><div class="cost-row"><span class="cost-row-label">숙박·식비·교통 합계</span><span class="cost-row-value">${m.costTotal}</span></div>`;
   } else {
     costRows.style.display = '';
     costSpecial.style.display = 'none';
