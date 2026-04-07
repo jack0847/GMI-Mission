@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>GMI 단기선교 TV 슬라이드쇼</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; }
+  body {
+    background: #0f1f3d; font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; color: white;
+    transform: scale(0.75); transform-origin: top left;
+    width: 2560px; height: 1440px;
+  }
+
+  .slide { width: 2560px; height: 1440px; display: none; position: absolute; top: 0; left: 0; }
+  .slide.active { display: flex; }
+
+  /* ── 상세 슬라이드 ── */
+  .detail-slide { flex-direction: row; }
+  .detail-photo {
+    width: 960px; height: 1440px; flex-shrink: 0;
+    background-size: cover; background-position: center; position: relative;
+  }
+  .detail-photo::after {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 190px; height: 100%;
+    background: linear-gradient(to right, transparent, #0f1f3d);
+  }
+  .detail-content {
+    flex: 1; padding: 72px 110px 64px 68px;
+    display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+  }
+  .detail-region { font-size: 58px; color: #c8a96e; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+  .detail-country { font-size: 150px; font-weight: 700; line-height: 1.05; margin-bottom: 28px; }
+  .detail-meta { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+  .meta-row { display: flex; gap: 20px; align-items: baseline; }
+  .meta-label { font-size: 42px; color: rgba(255,255,255,0.7); width: 196px; flex-shrink: 0; }
+  .meta-value { font-size: 50px; font-weight: 500; }
+  .detail-divider { width: 100px; height: 5px; background: #c8a96e; margin-bottom: 26px; border-radius: 2px; }
+  .detail-desc { font-size: 38px; line-height: 1.65; color: #ffffff; margin-bottom: 0; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .outreach-title { font-size: 42px; color: #c8a96e; letter-spacing: 2px; margin-top: 56px; margin-bottom: 18px; }
+  .outreach-list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+  .outreach-list li { font-size: 44px; color: #ffffff; padding-left: 44px; position: relative; line-height: 1.35; }
+  .outreach-list li::before { content: '•'; position: absolute; left: 0; color: #c8a96e; }
+  .detail-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 18px; border-top: 1px solid rgba(200,169,110,0.4); }
+  .detail-org { font-size: 40px; color: rgba(255,255,255,0.7); }
+  .detail-contact { font-size: 40px; color: #ffffff; }
+
+  /* ── QR 슬라이드 ── */
+  .qr-slide {
+    background: linear-gradient(160deg, #0f1f3d 0%, #1a3a6b 100%);
+    flex-direction: column; align-items: center; justify-content: center;
+  }
+  .qr-top-line {
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(to right, transparent, #c8a96e 20%, #c8a96e 80%, transparent);
+  }
+  .qr-country-label { font-size: 96px; color: #c8a96e; margin-bottom: 32px; }
+  .qr-title { font-size: 197px; font-weight: 700; margin-bottom: 115px; }
+  .qr-codes { display: flex; gap: 285px; align-items: flex-start; }
+  .qr-item { display: flex; flex-direction: column; align-items: center; gap: 40px; }
+  .qr-box { width: 533px; height: 533px; background: white; border-radius: 45px; padding: 29px; display: flex; align-items: center; justify-content: center; }
+  .qr-box img { width: 100%; height: 100%; }
+  .qr-label { font-size: 77px; font-weight: 600; }
+  .qr-sublabel { font-size: 53px; color: rgba(255,255,255,0.7); }
+  .qr-divider { width: 3px; height: 533px; margin-top: 29px; background: linear-gradient(to bottom, transparent, rgba(200,169,110,0.5), transparent); }
+
+  /* 진행 바 */
+  .progress-bar { position: fixed; bottom: 0; left: 0; height: 5px; background: #c8a96e; transition: width linear; }
+
+  /* 슬라이드 번호 */
+  .slide-indicator { position: fixed; bottom: 14px; right: 30px; font-size: 20px; color: rgba(255,255,255,0.35); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="slide-indicator" id="indicator"></div>
+
+<script>
+const WEBSITE = "https://gmi-mission.vercel.app";
+const QR_API = "https://api.qrserver.com/v1/create-qr-code/?size=268x268&data=";
+
+const missions = [
+  { emoji:"🇲🇼", country:"말라위", region:"아프리카", org:"북서진선교회", contact:"최우영 / 김이슬", period:"2~3주", cost:"항공 포함 약 235~280만원 (2~3주)", photo:"IMG_1167.JPG", desc:"아프리카 최빈국 중 하나인 말라위 수도 근교 음꼼베 마을 공동체에서 27개 마을을 섬기는 사역입니다. 북서진선교회는 8년 전 이 곳에 센터와 교회를 세우고 마을공동체의 일원으로 살아가며, 복음 전도·교육·의료·생계지원을 통해 주민들의 삶을 변화시키고 있습니다.", outreach:["현지 청년 대상 컴퓨터 및 인터넷 교육","어린이 대상 성경학교 및 예체능 교육","마을 공동체 문제 탐색 및 해결방안 연구"], applyUrl:"https://docs.google.com/forms/d/1civHZvb1Bs0LGfKjhLw_eiVBSu222K0PyYwyv9jihFo/viewform" },
+  { emoji:"🇰🇷", country:"제주 (한국)", region:"아시아", org:"YWAM 제주 열방대학", contact:"성정현", period:"7~8월 / 1~2월", cost:"항공 포함 1주 약 50만원", photo:"images/제주도/제주/썸네일.jpeg", desc:"제주 열방대학은 YWAM 코리아(예수전도단)의 훈련을 담당하는 곳으로, DTS 등 다양한 훈련학교를 운영합니다. 방학 기간 간사 자녀, 훈련생 자녀, 부설 기독학교 학생들을 대상으로 한 프로그램에 단기선교팀이 참여하게 됩니다.", outreach:["간사·훈련생 자녀 대상 방학 프로그램 운영","부설 기독학교 학생 대상 프로그램 참여","사자캠프 등 훈련 프로그램 보조"], applyUrl:"https://docs.google.com/forms/d/1w0g-3VpKgKs8kd1_KyOaO03GWqEVHGW9L33qTzT3qsA/viewform" },
+  { emoji:"🇮🇱", country:"이스라엘/팔레스타인", region:"중동", org:"MMI", contact:"권헌진", period:"7월 19일경 ~ 8월 9일경 (3주)", cost:"항공 포함 3주 약 400만원", photo:"https://lh3.googleusercontent.com/d/1QF4qjgh4QBPnqgQi77s4gmDh77NAsKyw", desc:"이스라엘은 유대인, 아랍인 등 다양한 민족이 함께 사는 나라로 한국인에 대한 열린 마음을 가지고 있습니다. 오랜 기간 기독교와 역사적 아픔이 있지만 최근 사회적 분위기가 바뀌고 있어, 예배와 기도를 통해 샬롬을 전하는 화평케 하는 그리스도인의 역할이 필요합니다.", outreach:["현지전문전도팀과 함께 하는 전도사역","거리 찬양 및 버스킹사역","지방전도사역 및 인터네셔널 협력사역"], applyUrl:"https://docs.google.com/forms/d/1RtHuBPSsYC2gbk_o3J2EJakQolbNYwu_yfVVyRIA2gc/viewform" },
+  { emoji:"🇷🇺", country:"러시아", region:"아시아", org:"고신총회세계선교회 (KPM)", contact:"김성래", period:"7월 초, 약 2주 (예: 7/5~7/17)", cost:"항공 포함 2주 약 175만원", photo:"images/russia/이 이미지가 썸네일입니다 최종.jpeg", desc:"러시아의 수도이자 1,300만 명 이상이 거주하는 모스크바는 180개 이상의 민족이 모인 복음의 허브입니다. 겉으로는 발전된 도시이지만 복음이 깊이 전해지지 않은 지역이며, 러시아 전역과 중앙아시아까지 영향을 줄 수 있는 전략적 선교지입니다.", outreach:["어린이·청소년 사역 (성경학교, 찬양, 게임)","찬양 및 예배 사역 (현지 교회 참여)","전도 및 관계 전도 (청년 교제, 카페 전도)"], applyUrl:"https://docs.google.com/forms/d/1zJbbXBf2pTsfHZHpseUiVZANMLxvoTVMrZ-ZRT2g160/viewform" },
+  { emoji:"🇱🇰", country:"스리랑카", region:"아시아", org:"TIM (두란노국제선교회)", contact:"David Sergey Ribakov", period:"6개월~1년", cost:"항공 포함 1개월 약 160~200만원", photo:"https://lh3.googleusercontent.com/d/1-Vppd5wdTkAny_KW5l0j-5ejx7FJIjXW", desc:"인도 남쪽 섬나라 스리랑카는 불교·힌두교·이슬람·기독교가 공존하는 다문화 사회이지만, 아직 복음을 듣지 못한 어린이와 청소년들이 많습니다. ANIS의 교실과 프로그램은 다음 세대 리더를 세우는 사역의 현장입니다.", outreach:["어린이·청소년 한국어·IT·음악 수업","경건회 및 청소년 예배 보조","리더십 개발 및 1:1 제자훈련"], applyUrl:"https://docs.google.com/forms/d/1S5LArjZetMqpWBa-SLTBcl8oevxitcKgI5yzyjqX_2c/viewform" },
+  { emoji:"🇰🇬", country:"키르기즈스탄", region:"아시아", org:"His.net", contact:"신은호", period:"7/13~7/25", cost:"항공 포함 약 200~240만원", photo:"images/키르기스스탄/썸네일.jpeg", desc:"국토의 90% 이상이 만년설로 이루어진 '중앙아시아의 스위스'입니다. 인구 대다수가 이슬람을 믿는 영적 척박지이지만, 히즈넷 소속 선교사가 15년째 교회를 개척하며 소외된 아이들과 공동체 생활을 하며 신앙과 교육으로 양육하고 있습니다.", outreach:["간증 및 멘토링 (청소년 비전 나눔)","소외된 아이들에게 하나님의 사랑 전하기","사고력 수학 캠프 및 교육 지원"], applyUrl:"https://docs.google.com/forms/d/1QVz1_2N0rIfzZDRtqJ3YZ46JSxMbAtZvHcYAa9LECZM/viewform" },
+  { emoji:"🇯🇴", country:"요르단", region:"중동", org:"His.net", contact:"신은호", period:"7월 20일 ~ 8월 4일 (2주)", cost:"항공 포함 약 250만원", photo:"images/요르단/썸네일.jpeg", desc:"시리아·팔레스타인 등 수많은 난민이 모여든 선교적 요충지입니다. 수면 아래에서는 일대일 복음 전파와 가정교회(Micro Church) 개척이 활발하게 일어나는 소망의 땅입니다.", outreach:["영어캠프: 난민 어린이·청소년 80여 명 대상","왕의대로 예배사역: 요르단 전역 순회","베데스다 클리닉 의료 사역 보조"], applyUrl:"https://docs.google.com/forms/d/106IUcULYZEwlcImMdMpiW5PlXD2Ja8UOARyvEiX25Z8/viewform" },
+  { emoji:"🇹🇷", country:"튀르키예", region:"중동", org:"FMnC", contact:"샘물", period:"6월 중순 ~ 8월 중순", cost:"항공 포함 2주 약 300만원", photo:"images/튀르키예/IMG_0057.jpg", desc:"튀르키예는 로마·그리스 문명과 초기 기독교 일곱 교회의 유산이 꽃피었던 복음의 관문입니다. 수도 앙카라는 아나톨리아 반도의 정중앙에 위치한 동서양의 전략적 허브로, 중앙아시아 전역으로 복음이 뻗어 나가는 미션 거점 도시입니다.", outreach:["민족별 교회 방문 및 지방 사역","시내 거리·학교에서 현지인 전도","바울 선교 여행길 유적지 탐방"], applyUrl:"https://docs.google.com/forms/d/1CDwJVybhuSiEzK_IahPtuYqzf8hY83MT24f9w7V2TeE/viewform" },
+  { emoji:"🇯🇵", country:"일본", region:"아시아", org:"기독교 대한 성결교회", contact:"김미영, 박성대", period:"7/14~21 (6박 7일)", cost:"항공 포함 7일 약 100만원", photo:"images/japan/jp_1.png", desc:"일본은 경제적으로 선진국이지만 기독교 인구가 1% 미만인 대표적인 미전도 국가입니다. 삿포로에서 다음 세대를 향한 신앙 교육과 지역 사회 속 자연스러운 복음 전파가 이루어지고 있습니다.", outreach:["어린이·청소년 악기 교육 및 문화 프로그램","찬양팀 협력 사역 및 저녁 찬양 집회","코도모쇼쿠도 어린이 급식 봉사 지원"], applyUrl:"https://docs.google.com/forms/d/1cN_bq4nvTmkZD-EyktJOcVn7T7sL_4rlwwkUPRqubtY/viewform" },
+  { emoji:"🇰🇿", country:"카자흐스탄 (알마티)", region:"아시아", org:"His.net", contact:"신은호", period:"7월 13일 ~ 7월 25일", cost:"현지 비용 약 100만원 (항공 별도)", photo:"images/카자흐스탄/썸네일.jpeg", desc:"세계 9위의 광활한 영토와 풍부한 자원을 가진 다민족 이슬람 국가입니다. 옛 수도 알마티는 '아시아의 알프스' 톈산 산맥을 품은 중앙아시아 경제 발전의 중심지입니다. 카작 민족의 복음화율은 1% 남짓이지만, 최근 복음의 문이 열리고 있습니다.", outreach:["CAF 중앙아 3국 연합캠프 (5개국어 진행)","알마티 및 인근 지방 복음 전도","공원·거리 버스킹 및 문화 사역"], applyUrl:"https://docs.google.com/forms/d/1u69g-XST3ch0ddXc71eyQ67UQanD1lKxdd0h-RKATYU/viewform" },
+  { emoji:"🗺️", country:"실크로드 1327", region:"중앙아시아/중동", org:"더포윈즈1327 미니스트리", contact:"장다윗", period:"6월 30일 ~ 8월 6일 (38일)", cost:"전체 약 259만원", photo:"images/실크로드 1327/썸네일.jpeg", desc:"찬란한 문화가 가득한 실크로드는 1400년간 이슬람이 왕노릇한 길입니다. 우즈베키스탄·아제르바이잔·튀르키예 3개국을 순회하며 복음이 가장 필요한 현장을 직접 경험하는 코스입니다.", outreach:["문화교류사역 및 복음전도","현지교회 예배사역 (그리스도인·난민·아프리카 교회)","현지교회 및 복음주의기관 방문 협력"], applyUrl:"https://docs.google.com/forms/d/1GC4LSE8mOWuv4u3qhdaiSCebJVoTIbCO8AupqtsNvyg/viewform" },
+  { emoji:"🗺️", country:"킹스웨이 1327", region:"중동/아프리카", org:"더포윈즈1327 미니스트리", contact:"장다윗", period:"6월 30일 ~ 8월 6일 (38일)", cost:"전체 약 299만원", photo:"images/킹스웨이 1327/썸네일.jpeg", desc:"킹스웨이는 과거 중동의 화려한 문화·문물 교역의 중심지대를 따라 형성된 아랍·아프리카 권역입니다. 모로코·이집트·튀르키예 3개국을 순회하며 이슬람 문명의 심장부에서 복음을 경험하는 코스입니다.", outreach:["문화교류사역 및 복음전도","현지교회 예배사역 (그리스도인·난민·아프리카 교회)","현지교회 및 복음주의기관 방문 협력"], applyUrl:"https://docs.google.com/forms/d/1teGTvB0_CKmHFAaGyflCVVzacN7vgGSszywEuBtAhp4/viewform" },
+];
+
+const DETAIL_DURATION = 15000;
+const QR_DURATION = 12000;
+
+function buildSlides() {
+  const container = document.body;
+  const slides = [];
+
+  missions.forEach((m, i) => {
+    // 상세 슬라이드
+    const detail = document.createElement('div');
+    detail.className = 'slide detail-slide';
+    detail.id = 'slide-' + (i * 2);
+    detail.innerHTML = `
+      <div class="detail-photo" style="background-image: url('${m.photo}')"></div>
+      <div class="detail-content">
+        <div>
+          <div class="detail-region">${m.region}</div>
+          <div class="detail-country">${m.emoji} ${m.country}</div>
+          <div class="detail-meta">
+            <div class="meta-row"><span class="meta-label">파견 기간</span><span class="meta-value">${m.period}</span></div>
+            <div class="meta-row"><span class="meta-label">선교사</span><span class="meta-value">${m.contact}</span></div>
+            <div class="meta-row"><span class="meta-label">예상 비용</span><span class="meta-value">${m.cost}</span></div>
+          </div>
+          <div class="detail-divider"></div>
+          <div class="detail-desc">${m.desc}</div>
+          <div class="outreach-title">WHAT TO DO IN OUTREACH</div>
+          <ul class="outreach-list">${m.outreach.map(o => `<li>${o}</li>`).join('')}</ul>
+        </div>
+        <div class="detail-footer">
+          <span class="detail-org">${m.org}</span>
+          <span class="detail-contact">문의: ${m.contact}</span>
+        </div>
+      </div>
+    `;
+    container.insertBefore(detail, document.getElementById('progress'));
+    slides.push({ el: detail, duration: DETAIL_DURATION });
+
+    // QR 슬라이드
+    const qr = document.createElement('div');
+    qr.className = 'slide qr-slide';
+    qr.id = 'slide-' + (i * 2 + 1);
+    qr.innerHTML = `
+      <div class="qr-top-line"></div>
+      <div class="qr-country-label">${m.emoji} ${m.country}</div>
+      <div class="qr-title">지금 바로 신청하세요</div>
+      <div class="qr-codes">
+        <div class="qr-item">
+          <div class="qr-box"><img src="${QR_API}${encodeURIComponent(m.applyUrl)}" alt="신청하기 QR"></div>
+          <div class="qr-label">✍️ 신청하기</div>
+          <div class="qr-sublabel">신청서 바로가기</div>
+        </div>
+        <div class="qr-divider"></div>
+        <div class="qr-item">
+          <div class="qr-box"><img src="${QR_API}${encodeURIComponent(WEBSITE)}" alt="웹사이트 QR"></div>
+          <div class="qr-label">🌐 웹사이트</div>
+          <div class="qr-sublabel">전체 선교지 보기</div>
+        </div>
+      </div>
+    `;
+    container.insertBefore(qr, document.getElementById('progress'));
+    slides.push({ el: qr, duration: QR_DURATION });
+  });
+
+  return slides;
+}
+
+const slides = buildSlides();
+const total = slides.length;
+let current = 0;
+let timer = null;
+
+function showSlide(index) {
+  slides.forEach(s => s.el.classList.remove('active'));
+  slides[index].el.classList.add('active');
+  document.getElementById('indicator').textContent = (index + 1) + ' / ' + total;
+  startProgress(slides[index].duration);
+}
+
+function startProgress(duration) {
+  const bar = document.getElementById('progress');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    bar.style.transition = `width ${duration}ms linear`;
+    bar.style.width = '100%';
+  }));
+  clearTimeout(timer);
+  timer = setTimeout(() => { current = (current + 1) % total; showSlide(current); }, duration);
+}
+
+// 키보드로 수동 조작 가능 (← →)
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') { clearTimeout(timer); current = (current + 1) % total; showSlide(current); }
+  if (e.key === 'ArrowLeft')  { clearTimeout(timer); current = (current - 1 + total) % total; showSlide(current); }
+});
+
+showSlide(0);
+</script>
+</body>
+</html>
